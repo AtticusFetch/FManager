@@ -14,6 +14,14 @@ FManagerControllers.controller('mainPageController', ['$http','$scope','$mdDialo
             targetEvent: ev
         })
     };
+    $scope.showLogInForm = function (ev) {
+        $mdDialog.show({
+            controller: logInController,
+            templateUrl: '../../templates/logInForm.html',
+            parent: angular.element(document.body),
+            targetEvent: ev
+        })
+    };
     $http.get('/api/mainPage');
 }]);
 
@@ -21,4 +29,10 @@ function registrationController ($scope,$mdDialog) {
     $scope.submit = function () {
         $mdDialog.hide();
     }
-};
+}
+
+function logInController ($scope,$mdDialog) {
+    $scope.submit = function () {
+        $mdDialog.hide();
+    }
+}
