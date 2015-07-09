@@ -3,7 +3,7 @@
         <md-toolbar>
             <div class="md-toolbar-tools">
                 <h2>Registration Form</h2>
-                <md-button class="md-icon-button" ng-click="submit()">
+                <md-button class="md-icon-button" ng-click="close()">
                     <md-icon md-svg-src="../assets/img/i-close.svg" aria-label="Close form"></md-icon>
                 </md-button>
             </div>
@@ -13,13 +13,13 @@
                 <h4>
                     Hey there!
                 </h4>
-                <input class="registration-input" type="text" placeholder="Username"/>
-                <input class="registration-input" type="email" placeholder="e-mail"/>
-                <input class="registration-input" type="password" placeholder="Password"/>
+                <input ng-model="formData.username" class="registration-input" type="text" placeholder="Username"/>
+                <input ng-model="formData.email" class="registration-input" type="email" placeholder="e-mail"/>
+                <input ng-model="formData.password" class="registration-input" type="password" placeholder="Password"/>
             </div>
         </md-dialog-content>
         <div class="md-actions" layout="row" layout-sm="column" layout-align="center center">
-            <md-button ng-click="submit()" class="md-primary">
+            <md-button ng-click="close()" class="md-primary">
                 Close
             </md-button>
             <md-button ng-click="submit()" class="md-primary">

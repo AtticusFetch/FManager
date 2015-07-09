@@ -1,12 +1,18 @@
 /**
  * Created by Ivan_Iankovskyi on 7/8/2015.
  */
-var FManager = angular.module('FManager', ['ngRoute', 'FManagerControllers', 'ngMaterial'])
+'use strict';
+
+var FManager = angular.module('FManager', ['ngRoute', 'FManagerControllers', 'registrationServices', 'ngMaterial'])
     .config(['$routeProvider',
         function ($routeProvider) {
             $routeProvider.
                 when('/', {
                     templateUrl: '../templates/main.html',
                     controller: 'mainPageController'
+                }).
+                when('/:username', {
+                    templateUrl: '../templates/mainLogged.html',
+                    controller: 'mainPageLoggedController'
                 })
         }]);
