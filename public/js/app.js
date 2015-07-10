@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var FManager = angular.module('FManager', ['ngRoute', 'FManagerControllers', 'registrationServices', 'ngMaterial'])
+var FManager = angular.module('FManager', ['ngRoute', 'FManagerControllers', 'registrationServices', 'ngMaterial', 'ngCookies'])
     .config(['$routeProvider',
         function ($routeProvider) {
             $routeProvider.

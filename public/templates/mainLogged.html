@@ -1,3 +1,42 @@
 <div class="main-page-content">
+    <md-button class="md-icon-button md-primary md-button menu-button" ng-click="toggleLeft()"
+               class="md-primary">
+        <md-icon md-svg-icon="../assets/img/i-menu.svg" aria-hidden="true"></md-icon>
+    </md-button>
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
+        <md-toolbar class="md-theme-indigo">
+            <h1 class="md-toolbar-tools">{{currUsername}}</h1>
+        </md-toolbar>
+        <md-content class="side-nav-content" layout-padding ng-controller="LeftCtrl">
+            <md-button ng-click="close()"
+                       class="md-icon-button md-button md-primary md-whiteframe-z1 menu-button-close">
+                <md-icon md-svg-icon="../assets/img/i-arrow-left.svg" aria-hidden="true"></md-icon>
+            </md-button>
+            <div class="side-nav-button-block" hide-md show-gt-md>
+                <ul>
+                    <li>
+                        <md-button class="md-raised md-primary" ng-click="">
+                            Profile
+                        </md-button>
+                    </li>
+                    <li>
+                        <md-button class="md-raised md-primary" ng-click="">
+                            Tables
+                        </md-button>
+                    </li>
+                    <li>
+                        <md-button class="md-raised md-primary" ng-click="">
+                            Analytics
+                        </md-button>
+                    </li>
+                    <li>
+                        <md-button class="md-raised md-primary" ng-click="">
+                            Log Out
+                        </md-button>
+                    </li>
+                </ul>
+            </div>
+        </md-content>
+    </md-sidenav>
     <h1 class="md-display-3 sub-header">{{authMessage}}</h1>
 </div>

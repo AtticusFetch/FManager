@@ -19,10 +19,6 @@
             text-align: center;
         }
 
-        .main-page-content {
-            margin-top: 15%;
-        }
-
         .registration-form h4 {
             font-weight: 400;
         }
@@ -43,11 +39,53 @@
         .user-info {
             float: right;
         }
+
+        .menu-button {
+            top: -50px;
+            z-index: 2;
+        }
+
+        .menu-button-close {
+            position: absolute;
+            top: 50%;
+            right: 0;
+        }
+
+        .menu-button-close {
+            border-radius: 50%;
+            top: 128px;
+        }
+
+        .side-nav-content {
+            height: 90%;
+        }
+
+        .md-sidenav-left {
+            height: 400px;
+            top: 128px;
+            overflow: hidden;
+        }
+
+        .side-nav-button-block ul {
+            padding: 0;
+            margin: 0;
+        }
+
+        .side-nav-button-block ul li {
+            width: 80%;
+            margin-right: 10px;
+        }
+
+        .side-nav-button-block ul li button {
+            width: 100%;
+            height: 60px;
+        }
     </style>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
     <script src="bower_components/angular/angular.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="js/app.js"></script>
     <script src="js/controllers/FManagerControllers.js"></script>
@@ -55,20 +93,17 @@
 
 </head>
 <body layout="column">
-<md-content>
-    <md-toolbar class="md-tall" layout="row">
-        <div class="md-toolbar-tools">
-            <h1 class="md-display-4">FManager</h1>
-        </div>
-    </md-toolbar>
-    <div class="view-container">
-        <div ng-view class="view-frame"></div>
+<md-toolbar md-scroll-shrink class="md-tall" layout="row">
+    <div class="md-toolbar-tools">
+        <h1 class="md-display-4">FManager</h1>
     </div>
-</md-content>
+</md-toolbar>
+<div class="view-container">
+    <div ng-view class="view-frame"></div>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-animate.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-aria.min.js"></script>
-
 <script src="https://ajax.googleapis.com/ajax/libs/angular_material/0.9.4/angular-material.min.js"></script>
 </body>
 </html>
