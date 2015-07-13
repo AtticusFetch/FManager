@@ -1,0 +1,87 @@
+<div class="main-page-content">
+    <md-button class="md-icon-button md-primary md-button menu-button" aria-label="Toggle Menu" ng-click="toggleLeft()"
+               class="md-primary">
+        <md-icon md-svg-icon="../assets/img/i-menu.svg" aria-hidden="true"></md-icon>
+    </md-button>
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2" md-component-id="left">
+        <md-toolbar class="md-theme-indigo">
+            <h1 class="md-toolbar-tools">{{currUsername}}</h1>
+        </md-toolbar>
+        <md-content class="side-nav-content" layout-padding ng-controller="LeftCtrl">
+            <md-button aria-label="Close Menu" ng-click="close()"
+                       class="md-icon-button md-button md-primary md-whiteframe-z1 menu-button-close">
+                <md-icon md-svg-icon="../assets/img/i-arrow-left.svg" aria-hidden="true"></md-icon>
+            </md-button>
+            <div class="side-nav-button-block" hide-md show-gt-md>
+                <ul>
+                    <li>
+                        <md-button ng-href="#/{{currUsername}}/profile" class="md-raised md-primary isActive"
+                                   ng-click="">
+                            Profile
+                        </md-button>
+                    </li>
+                    <li>
+                        <md-button ng-href="#/{{currUsername}}/tables" class="md-raised md-primary" ng-click="">
+                            Tables
+                        </md-button>
+                    </li>
+                    <li>
+                        <md-button ng-href="#/{{currUsername}}/analytics" class="md-raised md-primary" ng-click="">
+                            Analytics
+                        </md-button>
+                    </li>
+                    <li>
+                        <md-button class="md-raised md-primary" ng-click="logOut()">
+                            Log Out
+                        </md-button>
+                    </li>
+                </ul>
+            </div>
+        </md-content>
+    </md-sidenav>
+    <md-content>
+        <h1 class="md-display-1 sub-header">Submit expense:</h1>
+
+        <form layout="column" class="expense-form">
+            <md-input-container>
+                <label>Products name</label>
+                <input ng-model="formData.name" required/>
+            </md-input-container>
+            <md-input-container>
+                <label>Category</label>
+                <input ng-model="formData.category" required type="text"/>
+            </md-input-container>
+            <md-input-container>
+                <label>Amount</label>
+                <input ng-model="formData.amount" required type="number" min="1" step="1"/>
+            </md-input-container>
+            <md-input-container>
+                <label>Price</label>
+                <input ng-model="formData.cost" required type="number" min="0" step="0.01"/>
+            </md-input-container>
+            <md-input-container>
+                <label>Date</label>
+                <input ng-model="formData.date" required type="date"/>
+            </md-input-container>
+            <md-button ng-click="submitExpense()"
+                       style="width: 30%;margin: auto auto 10px auto; border: 1px solid rgba(70,70,70,0.3); border-radius: 4px">Submit
+            </md-button>
+        </form>
+        <md-divider ></md-divider>
+        <div class="expenses-list-container">
+            <md-list>
+                <md-subheader class="md-no-sticky">Expenses:</md-subheader>
+                <md-list-item class="md-3-line" ng-repeat="expense in expenses">
+                    <md-button class="md-icon-button" ng-click="removeExpense(expense._id)">
+                        <md-icon md-svg-src="../assets/img/i-close.svg" aria-label="Delete Expense"></md-icon>
+                    </md-button>
+                    <div class="md-list-item-text">
+                        <h3>{{ expense.name }}</h3>
+                        <h4>{{ expense.cost }}</h4>
+                        <p>{{ expense.date }}</p>
+                    </div>
+                </md-list-item>
+            </md-list>
+        </div>
+    </md-content>
+</div>

@@ -3,7 +3,7 @@
  */
 'use strict';
 
-var FManager = angular.module('FManager', ['ngRoute', 'FManagerControllers', 'registrationServices', 'ngMaterial', 'ngCookies'])
+var FManager = angular.module('FManager', ['ngRoute', 'FManagerControllers', 'registrationServices', 'expenseServices', 'ngMaterial', 'ngCookies'])
     .config(['$routeProvider',
         function ($routeProvider) {
             $routeProvider.
@@ -14,5 +14,17 @@ var FManager = angular.module('FManager', ['ngRoute', 'FManagerControllers', 're
                 when('/:username', {
                     templateUrl: '../templates/mainLogged.html',
                     controller: 'mainPageLoggedController'
+                }).
+                when('/:username/profile', {
+                    templateUrl: '../templates/profile.html',
+                    controller: 'profileController'
+                }).
+                when('/:username/tables', {
+                    templateUrl: '../templates/tables.html',
+                    controller: 'tablesController'
+                }).
+                when('/:username/analytics', {
+                    templateUrl: '../templates/analytics.html',
+                    controller: 'analyticsController'
                 })
         }]);

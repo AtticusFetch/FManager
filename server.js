@@ -23,6 +23,60 @@ var User = mongoose.model('User', {
     password: String
 });
 
+var Expense = mongoose.model('Expense', {
+    _userId: String,
+    date: Date,
+    category: String,
+    name: String,
+    amount: String,
+    cost: String
+});
+
+app.post('/api/newExpense', function (req, res) {
+    Expense.create({
+        _userId: req.body._userId,
+        date: req.body.date || new Date(),
+        category: req.body.category,
+        name: req.body.name,
+        amount: req.body.amount || 1,
+        cost: req.body.cost,
+        done: false
+    }, function (err, expense) {
+        if (err)
+            res.send(err);
+
+        Expense.find({_id: expense._id}, function (err, expense) {
+            if (err)
+                res.send(err);
+            console.log(expense);
+            res.json(expense);
+
+        })
+    })
+});
+
+app.get('/api/getExpenses/:userId', function (req, res) {
+    Expense.find({_userId: req.params.userId}, function (err, expenses) {
+        if (err)
+            res.send(err);
+        res.json(expenses);
+    })
+});
+
+app.get('/api/getAllExpenses', function (req, res) {
+    Expense.find(function (err, expenses) {
+        console.log(expenses);
+    })
+});
+
+app.delete('/api/removeExpense/:expenseId', function (req, res) {
+    Expense.remove({_id: req.params.expenseId}, function (err, expense) {
+        if (err)
+            res.send(err);
+        res.json(expense);
+    });
+});
+
 app.get('/api/getAllUsers', function (req, res) {
     User.find(function (err, users) {
         console.log(users);
@@ -65,7 +119,7 @@ app.post('/api/newUser', function (req, res) {
     })
 });
 
-app.get('*', function (req, res) {
+app.get('/api/mainPage', function (req, res) {
     res.sendFile('public/index.html', {root: __dirname});
 });
 

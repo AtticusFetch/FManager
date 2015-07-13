@@ -38,5 +38,9 @@
             </div>
         </md-content>
     </md-sidenav>
-    <h1 class="md-display-3 sub-header">{{authMessage}}</h1>
+    <h1 class="md-display-3 sub-header">{{currUsername}}</h1>
+    <div layout="column" class="user-info">
+        <div flex class="md-display-1 user-info__username"><span>Username: </span>{{currUsername}}</div>
+        <div flex class="md-display-1 user-info__email"><span>E-mail: </span>{{currEmail}}</div>
+    </div>
 </div>

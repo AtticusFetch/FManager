@@ -8,7 +8,32 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=RobotoDraft:300,400,500,700,400italic">
 
     <style>
-        body {
+
+        body::-webkit-scrollbar {
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            width: 10px;
+        }
+
+        /* Track */
+        body::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+        }
+
+        /* Handle */
+        body::-webkit-scrollbar-thumb {
+
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            background: rgba(100,100,100,0.8);
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+        }
+        body::-webkit-scrollbar-thumb:window-inactive {
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            background: rgba(100,100,100,0.4);
         }
 
         .md-toolbar-tools h1 {
@@ -64,6 +89,7 @@
             height: 400px;
             top: 128px;
             overflow: hidden;
+            position: absolute;
         }
 
         .side-nav-button-block ul {
@@ -80,6 +106,49 @@
             width: 100%;
             height: 60px;
         }
+
+        .side-nav-button-block ul li a {
+            text-align: center;
+            width: 100%;
+            height: 60px;
+        }
+
+        .side-nav-button-block ul li a span {
+            text-align: center;
+            line-height: 60px;
+        }
+
+        .user-info {
+            float: none;
+            margin: 0 auto;
+        }
+
+        .user-info__username {
+            display: inline-block;
+            margin: 0 auto;
+        }
+
+        .user-info__email {
+            display: inline-block;
+            margin: 10px auto;
+        }
+
+        .expense-form {
+            width: 40%;
+            margin: auto;
+        }
+
+        .expense-form .md-docs-dark-theme {
+            width: 60%;
+            margin: 10px auto;
+            border: 1px solid rgba(50,0,200,0.2);
+            border-radius: 5px;
+        }
+
+        .expenses-list-container {
+            width: 50%;
+            margin: 20px auto;
+        }
     </style>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -90,6 +159,7 @@
     <script src="js/app.js"></script>
     <script src="js/controllers/FManagerControllers.js"></script>
     <script src="js/services/registrationServices.js"></script>
+    <script src="js/services/expenseServices.js"></script>
 
 </head>
 <body layout="column">

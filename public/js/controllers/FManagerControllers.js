@@ -27,45 +27,150 @@ FManagerControllers.controller('mainPageController', ['$http', '$scope', '$rootS
         if (!isLogged) {
             $http.get('/api/mainPage');
         } else {
-            $location.url('/' + $cookies.username);
+            $location.url('#/' + $cookies.username);
         }
     }]);
 
-FManagerControllers.controller('mainPageLoggedController', ['$routeParams', '$scope', '$rootScope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$cookies', 'users',
-    function ($routeParams, $scope, $rootScope, $location, $timeout, $mdSidenav, $mdUtil, $log, $cookies, users) {
+FManagerControllers.controller('mainPageLoggedController', ['$routeParams', '$scope', '$rootScope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$cookies',
+    function ($routeParams, $scope, $rootScope, $location, $timeout, $mdSidenav, $mdUtil, $cookies) {
         $scope.authMessage = '';
         if (!$cookies.IsLogged) {
             alert('You are not logged on!');
-            $location.url('/');
+            $location.url('#/');
         } else {
-            users.getUserById($cookies.userId)
-                .success(function (data) {
-                    $scope.currUsername = data[0].username;
-                    $scope.authMessage = 'You are successfully logged on as ' + data[0].username;
-                });
+            $scope.currUsername = $cookies.username;
+            $scope.authMessage = 'You are successfully logged on as ' + $scope.currUsername;
         }
+        $scope.logOut = function () {
+            delete $cookies.IsLogged;
+            delete $cookies.username;
+            delete $cookies.email;
+            delete $cookies.userId;
+            $location.url('/');
+        };
         $scope.toggleLeft = buildToggler('left');
         function buildToggler(navID) {
             var debounceFn = $mdUtil.debounce(function () {
                 $mdSidenav(navID)
                     .toggle()
-                    .then(function () {
-                        $log.debug("toggle " + navID + " is done");
-                    });
             }, 300);
             return debounceFn;
         }
-    }])
-    .controller('LeftCtrl', function ($scope, $timeout, $mdSidenav, $log) {
-        $scope.close = function () {
-            $mdSidenav('left').close()
-                .then(function () {
-                    $log.debug("close LEFT is done");
+    }]);
+
+FManagerControllers.controller('LeftCtrl', function ($scope, $timeout, $mdSidenav) {
+    $scope.close = function () {
+        $mdSidenav('left').close()
+    };
+});
+
+FManagerControllers.controller('profileController', ['$routeParams', '$scope', '$rootScope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$cookies',
+    function ($routeParams, $scope, $rootScope, $location, $timeout, $mdSidenav, $mdUtil, $log, $cookies) {
+        $scope.authMessage = '';
+        if (!$cookies.IsLogged) {
+            alert('You are not logged on!');
+            $location.url('/');
+        } else {
+            $scope.currUsername = $cookies.username;
+            $scope.authMessage = $scope.currUsername + "'s profile page";
+            $scope.currEmail = $cookies.email;
+        }
+        $scope.logOut = function () {
+            delete $cookies.IsLogged;
+            delete $cookies.username;
+            delete $cookies.email;
+            delete $cookies.userId;
+            $location.url('/');
+        };
+        $scope.toggleLeft = buildToggler('left');
+        function buildToggler(navID) {
+            var debounceFn = $mdUtil.debounce(function () {
+                $mdSidenav(navID)
+                    .toggle()
+            }, 300);
+            return debounceFn;
+        }
+    }]);
+
+FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$rootScope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$cookies', 'expenses',
+    function ($routeParams, $scope, $rootScope, $location, $timeout, $mdSidenav, $mdUtil, $log, $cookies, expenses) {
+        $scope.authMessage = '';
+        $scope.formData = {};
+        expenses.getExpensesByUserId($cookies.userId).
+            success(function (data) {
+                $scope.expenses = data;
+            });
+        $scope.removeExpense = function (expenseId) {
+            expenses.remove(expenseId)
+                .success(function () {
+                    expenses.getExpensesByUserId($cookies.userId)
+                        .success(function (data) {
+                            $scope.expenses = data;
+                        });
                 });
         };
-    });
+        if (!$cookies.IsLogged) {
+            alert('You are not logged on!');
+            $location.url('/');
+        } else {
+            $scope.currUsername = $cookies.username;
+            $scope.authMessage = $scope.currUsername + "'s tables page";
+        }
+        $scope.submitExpense = function () {
+            $scope.formData._userId = $cookies.userId;
+            expenses.addExpense($scope.formData)
+                .success(function (data) {
+                    expenses.getExpensesByUserId($cookies.userId)
+                        .success(function (data) {
+                            $scope.expenses = data;
+                        });
+                })
+        };
+        $scope.logOut = function () {
+            delete $cookies.IsLogged;
+            delete $cookies.username;
+            delete $cookies.email;
+            delete $cookies.userId;
+            $location.url('/');
+        };
+        $scope.toggleLeft = buildToggler('left');
+        function buildToggler(navID) {
+            var debounceFn = $mdUtil.debounce(function () {
+                $mdSidenav(navID)
+                    .toggle()
+            }, 300);
+            return debounceFn;
+        }
+    }]);
 
-function registrationController($scope, $mdDialog, $location, $rootScope, users) {
+FManagerControllers.controller('analyticsController', ['$routeParams', '$scope', '$rootScope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$cookies',
+    function ($routeParams, $scope, $rootScope, $location, $timeout, $mdSidenav, $mdUtil, $log, $cookies) {
+        $scope.authMessage = '';
+        if (!$cookies.IsLogged) {
+            alert('You are not logged on!');
+            $location.url('/');
+        } else {
+            $scope.currUsername = $cookies.username;
+            $scope.authMessage = $scope.currUsername + "'s analytics page";
+        }
+        $scope.logOut = function () {
+            delete $cookies.IsLogged;
+            delete $cookies.username;
+            delete $cookies.email;
+            delete $cookies.userId;
+            $location.url('/');
+        };
+        $scope.toggleLeft = buildToggler('left');
+        function buildToggler(navID) {
+            var debounceFn = $mdUtil.debounce(function () {
+                $mdSidenav(navID)
+                    .toggle()
+            }, 300);
+            return debounceFn;
+        }
+    }]);
+
+function registrationController($scope, $mdDialog, $location, $cookies, users) {
     $scope.formData = {};
     $scope.close = function () {
         $mdDialog.hide();
@@ -78,8 +183,9 @@ function registrationController($scope, $mdDialog, $location, $rootScope, users)
                 .success(function (data) {
                     $mdDialog.hide();
                     $cookies.IsLogged = true;
-                    $cookies.userId = data[0]._id;
                     $cookies.username = data[0].username;
+                    $cookies.email = data[0].email;
+                    $cookies.userId = data[0]._id;
                     $location.url('/' + data[0].username);
                 })
                 .error(function (data) {
@@ -89,9 +195,11 @@ function registrationController($scope, $mdDialog, $location, $rootScope, users)
     }
 }
 
-function logInController($scope, $mdDialog, $http, $location, $rootScope, $cookies, users) {
+function logInController($scope, $mdDialog, $location, $cookies, $http, users) {
     $scope.formData = {};
     //$http.delete('clearAll');
+    //$http.get('/api/getAllUsers');
+    //$http.get('/api/getAllExpenses');
     $scope.close = function () {
         $mdDialog.hide();
     };
@@ -100,8 +208,9 @@ function logInController($scope, $mdDialog, $http, $location, $rootScope, $cooki
             .success(function (data) {
                 $mdDialog.hide();
                 $cookies.IsLogged = true;
-                $cookies.userId = data[0]._id;
                 $cookies.username = data[0].username;
+                $cookies.email = data[0].email;
+                $cookies.userId = data[0]._id;
                 $location.url('/' + data[0].username);
             })
             .error(function (data) {
