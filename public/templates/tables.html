@@ -64,20 +64,51 @@
                 <input ng-model="formData.date" required type="date"/>
             </md-input-container>
             <md-button ng-click="submitExpense()"
-                       style="width: 30%;margin: auto auto 10px auto; border: 1px solid rgba(70,70,70,0.3); border-radius: 4px">Submit
+                       style="width: 30%;margin: auto auto 10px auto; border: 1px solid rgba(70,70,70,0.3); border-radius: 4px">
+                Submit
+            </md-button>
+            <md-button ng-click="test()"
+                       style="width: 30%;margin: auto auto 10px auto; border: 1px solid rgba(70,70,70,0.3); border-radius: 4px">
+                Test
             </md-button>
         </form>
-        <md-divider ></md-divider>
+        <md-divider></md-divider>
         <div class="expenses-list-container">
+            <div class="filter-container">
+                <div class="search-block">
+                    <span>Search:</span> <input ng-model="query.$">
+                </div>
+                <div class="search-block">
+                    <span>by Name:</span> <input ng-model="query.name">
+                </div>
+                <div class="search-block">
+                    <span>by Category:</span> <input ng-model="query.category">
+                </div>
+                <div class="search-block">
+                    <span>Sort by:</span>
+                    <select ng-model="orderProp">
+                        <option value="name">Alphabetical</option>
+                        <option value="-date">Newest</option>
+                        <option value="date">Oldest</option>
+                        <option value="category">Category</option>
+                        <option value="-cost">Most expensive</option>
+                        <option value="cost">Least expensive</option>
+                    </select>
+                </div>
+            </div>
             <md-list>
-                <md-subheader class="md-no-sticky">Expenses:</md-subheader>
-                <md-list-item class="md-3-line" ng-repeat="expense in expenses">
+                <md-subheader class="md-no-sticky expense-list-table-header">Expenses:</md-subheader>
+                <md-list-item class="md-4-line list-item-container"
+                              ng-repeat="expense in expenses | filter:query | orderBy:orderProp">
                     <md-button class="md-icon-button" ng-click="removeExpense(expense._id)">
                         <md-icon md-svg-src="../assets/img/i-close.svg" aria-label="Delete Expense"></md-icon>
                     </md-button>
                     <div class="md-list-item-text">
-                        <h3>{{ expense.name }}</h3>
+                        <h4>{{ expense.name }}</h4>
                         <h4>{{ expense.cost }}</h4>
+
+                        <p>{{ expense.category }}</p>
+
                         <p>{{ expense.date }}</p>
                     </div>
                 </md-list-item>

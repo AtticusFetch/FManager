@@ -10,30 +10,19 @@
     <style>
 
         body::-webkit-scrollbar {
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            width: 10px;
+            width: 8px;
         }
 
         /* Track */
         body::-webkit-scrollbar-track {
-            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
         }
 
         /* Handle */
         body::-webkit-scrollbar-thumb {
-
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            background: rgba(100,100,100,0.8);
-            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+            background: rgba(100,100,100,0.5);
         }
         body::-webkit-scrollbar-thumb:window-inactive {
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            background: rgba(100,100,100,0.4);
+            background: rgba(100,100,100,0.1);
         }
 
         .md-toolbar-tools h1 {
@@ -148,6 +137,51 @@
         .expenses-list-container {
             width: 50%;
             margin: 20px auto;
+        }
+
+        .list-item-container {
+            margin: 10px 20px;
+            cursor: default;
+        }
+
+        .expense-list-table-header {
+            text-align: center;
+        }
+
+        .animate-repeat.ng-move,
+        .animate-repeat.ng-enter,
+        .animate-repeat.ng-leave {
+            -webkit-transition:all linear 0.5s;
+            transition:all linear 0.5s;
+        }
+
+        .animate-repeat.ng-leave.ng-leave-active,
+        .animate-repeat.ng-move,
+        .animate-repeat.ng-enter {
+            opacity:0;
+            max-height:0;
+        }
+
+        .animate-repeat.ng-leave,
+        .animate-repeat.ng-move.ng-move-active,
+        .animate-repeat.ng-enter.ng-enter-active {
+            opacity:1;
+            max-height:40px;
+        }
+
+        .filter-container {
+            width: 285px;
+        }
+
+        .filter-container .search-block {
+            margin-bottom: 10px;
+        }
+
+        .filter-container .search-block input {
+            display: block;
+        }
+        .filter-container .search-block select {
+            display: block;
         }
     </style>
 

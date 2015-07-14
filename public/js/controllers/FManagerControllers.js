@@ -96,6 +96,9 @@ FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$
     function ($routeParams, $scope, $rootScope, $location, $timeout, $mdSidenav, $mdUtil, $log, $cookies, expenses) {
         $scope.authMessage = '';
         $scope.formData = {};
+        $scope.test = function () {
+          console.log($scope.query);
+        };
         expenses.getExpensesByUserId($cookies.userId).
             success(function (data) {
                 $scope.expenses = data;
