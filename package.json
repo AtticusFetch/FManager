@@ -4,11 +4,12 @@
   "description": "",
   "main": "server.js",
   "devDependencies": {
-    "express": "^4.13.0",
-    "mongoose": "^4.0.6",
-    "morgan": "~1.2.2",
     "body-parser": "~1.5.2",
-    "method-override": "~2.1.2"
+    "chance": "^0.7.6",
+    "express": "^4.13.0",
+    "method-override": "~2.1.2",
+    "mongoose": "^4.0.6",
+    "morgan": "~1.2.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

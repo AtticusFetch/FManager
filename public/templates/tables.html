@@ -67,9 +67,13 @@
                        style="width: 30%;margin: auto auto 10px auto; border: 1px solid rgba(70,70,70,0.3); border-radius: 4px">
                 Submit
             </md-button>
-            <md-button ng-click="test()"
+            <md-button ng-click="generateExpenses()"
                        style="width: 30%;margin: auto auto 10px auto; border: 1px solid rgba(70,70,70,0.3); border-radius: 4px">
-                Test
+                generateExpenses
+            </md-button>
+            <md-button ng-click="clearAllExpenses()"
+                       style="width: 30%;margin: auto auto 10px auto; border: 1px solid rgba(70,70,70,0.3); border-radius: 4px">
+                Clear
             </md-button>
         </form>
         <md-divider></md-divider>
@@ -87,6 +91,7 @@
                 <div class="search-block">
                     <span>Sort by:</span>
                     <select ng-model="orderProp">
+                        <option value=""></option>
                         <option value="name">Alphabetical</option>
                         <option value="-date">Newest</option>
                         <option value="date">Oldest</option>
@@ -96,9 +101,9 @@
                     </select>
                 </div>
             </div>
-            <md-list>
+            <md-list class="animate-container">
                 <md-subheader class="md-no-sticky expense-list-table-header">Expenses:</md-subheader>
-                <md-list-item class="md-4-line list-item-container"
+                <md-list-item class="md-4-line list-item-container animate-repeat"
                               ng-repeat="expense in expenses | filter:query | orderBy:orderProp">
                     <md-button class="md-icon-button" ng-click="removeExpense(expense._id)">
                         <md-icon md-svg-src="../assets/img/i-close.svg" aria-label="Delete Expense"></md-icon>

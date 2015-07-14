@@ -77,6 +77,15 @@ app.delete('/api/removeExpense/:expenseId', function (req, res) {
     });
 });
 
+
+app.delete('/clearAllExpenses/:userId', function (req, res) {
+    Expense.remove({_userId: req.params.userId}, function (err, expense) {
+        if (err)
+            res.send(err);
+        res.json(expense);
+    });
+});
+
 app.get('/api/getAllUsers', function (req, res) {
     User.find(function (err, users) {
         console.log(users);

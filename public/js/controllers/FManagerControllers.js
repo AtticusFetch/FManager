@@ -92,24 +92,56 @@ FManagerControllers.controller('profileController', ['$routeParams', '$scope', '
         }
     }]);
 
-FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$rootScope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$cookies', 'expenses',
-    function ($routeParams, $scope, $rootScope, $location, $timeout, $mdSidenav, $mdUtil, $log, $cookies, expenses) {
+FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$rootScope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$cookies', '$http', 'expenses',
+    function ($routeParams, $scope, $rootScope, $location, $timeout, $mdSidenav, $mdUtil, $log, $cookies, $http, expenses) {
         $scope.authMessage = '';
         $scope.formData = {};
-        $scope.test = function () {
-          console.log($scope.query);
+        $scope.clearAllExpenses = function () {
+            $http.delete('/clearAllExpenses/' + $cookies.userId)
+                .success(function () {
+                    $scope.expenses = [];
+                })
         };
-        expenses.getExpensesByUserId($cookies.userId).
-            success(function (data) {
+        $scope.generateExpenses = function () {
+            $scope.clearAllExpenses();
+            var categories = ['Food', 'Lawns', 'Electronics', 'Taxes', 'Online Games', 'Gas', 'Wife'];
+            var dates = [];
+            var expense = {};
+            for (var month = 2; month <= 5; month++) {
+                for (var day = 1; day <= 30; day++) {
+                    dates.push(new Date(2015, month, day, 0, 0, 0, 0))
+                }
+            }
+            for (var dateIndex = 0; dateIndex < 3; dateIndex++) {
+                for (var expensesAmount = 0; expensesAmount < 3; expensesAmount++) {
+                    expense = {};
+                    expense._userId = $cookies.userId;
+                    expense.name = chance.string({length: 4, pool: 'abcdefghijklmnopqrstuvwxyz'});
+                    expense.category = categories[chance.natural({min: 0, max: 6})];
+                    expense.amount = chance.natural({min: 1, max: 6});
+                    expense.cost = chance.floating({min: 0.01, max: 100, fixed: 2});
+                    expense.date = dates[dateIndex];
+                    $http.post('/api/newExpense', expense)
+                        .success(function () {
+                            expenses.getExpensesByUserId($cookies.userId)
+                                .success(function (data) {
+                                    $scope.expenses = data;
+                                });
+                        })
+                }
+            }
+        };
+        expenses.getExpensesByUserId($cookies.userId)
+            .success(function (data) {
                 $scope.expenses = data;
             });
         $scope.removeExpense = function (expenseId) {
             expenses.remove(expenseId)
                 .success(function () {
-                    expenses.getExpensesByUserId($cookies.userId)
-                        .success(function (data) {
-                            $scope.expenses = data;
-                        });
+                    $scope.expenses.forEach(function (expense) {
+                        if (expense._id == expenseId)
+                            $scope.expenses.splice($scope.expenses.indexOf(expense),1);
+                    });
                 });
         };
         if (!$cookies.IsLogged) {

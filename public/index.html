@@ -148,6 +148,13 @@
             text-align: center;
         }
 
+        .animate-container {
+        }
+
+        .animate-repeat {
+            box-sizing:border-box;
+        }
+
         .animate-repeat.ng-move,
         .animate-repeat.ng-enter,
         .animate-repeat.ng-leave {
@@ -159,6 +166,7 @@
         .animate-repeat.ng-move,
         .animate-repeat.ng-enter {
             opacity:0;
+            top: -200px;
             max-height:0;
         }
 
@@ -166,7 +174,8 @@
         .animate-repeat.ng-move.ng-move-active,
         .animate-repeat.ng-enter.ng-enter-active {
             opacity:1;
-            max-height:40px;
+            top: 0;
+            max-height:200px;
         }
 
         .filter-container {
@@ -190,6 +199,7 @@
     <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/chance/chance.js"></script>
     <script src="js/app.js"></script>
     <script src="js/controllers/FManagerControllers.js"></script>
     <script src="js/services/registrationServices.js"></script>
