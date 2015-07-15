@@ -9,6 +9,24 @@
 
     <style>
 
+        .dev-block {
+            width: 600px;
+            margin: auto;
+        }
+
+        .dev-block button {
+            width: 250px;
+            margin: auto;
+        }
+
+        .dev-block button:last-child {
+            float: right;
+        }
+
+        body {
+            height: 1500px;
+        }
+
         body::-webkit-scrollbar {
             width: 8px;
         }
@@ -166,7 +184,7 @@
         .animate-repeat.ng-move,
         .animate-repeat.ng-enter {
             opacity:0;
-            top: -200px;
+            top: -350px;
             max-height:0;
         }
 
@@ -192,6 +210,11 @@
         .filter-container .search-block select {
             display: block;
         }
+
+        .graph {
+            width: 400px;
+            margin: auto;
+        }
     </style>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -200,10 +223,12 @@
     <script src="bower_components/angular-cookies/angular-cookies.js"></script>
     <script src="bower_components/angular-resource/angular-resource.js"></script>
     <script src="bower_components/chance/chance.js"></script>
+    <script src="bower_components/Chart.js/Chart.js"></script>
     <script src="js/app.js"></script>
     <script src="js/controllers/FManagerControllers.js"></script>
     <script src="js/services/registrationServices.js"></script>
     <script src="js/services/expenseServices.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 
 </head>
 <body layout="column">
