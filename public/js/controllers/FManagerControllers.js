@@ -110,46 +110,54 @@ FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$
             $scope.clearAllExpenses();
             var categories = ['Food', 'Lawns', 'Electronics', 'Taxes', 'Online Games', 'Gas', 'Wife'];
             var dates = [];
-            var expense = {};
-            var chance = new Chance();
-            for (var month = 2; month <= 5; month++) {
+            var startingMonth = 2;
+            var lastMonth = 3;
+
+            for (var month = startingMonth; month <= lastMonth; month++) {
                 for (var day = 1; day <= 30; day++) {
-                    dates.push(new Date(2015, month, day))
+                    for (var hour = 0; hour < 24; hour += 8) {
+                        dates.push(new Date(2015, month, day, hour, randomNumber(0, 59), randomNumber(0, 59)));
+                    }
                 }
             }
-            for (var dateIndex = 0; dateIndex < dates.length; dateIndex += 30) {
-                for (var expensesAmount = 0; expensesAmount < 3; expensesAmount++) {
-                    $.get("https://www.random.org/integers/", {
-                        num: "1",
-                        col: "1",
-                        min: "1",
-                        max: "23",
-                        base: "10",
-                        format: "plain",
-                        rnd: "new"
-                    }, function (randNum) {
-                        chance = new Chance(randNum);
+            expenseGenerator(categories, dates);
+        };
 
+        var randomNumber = function (min, max) {
+            var rNum1;
+            var rNum2;
+            var coin = chance.natural({min: 0, max: 1});
+            rNum1 = (Math.floor(Math.random() * (max - min + 1)) + min);
+            rNum2 = chance.natural({min: min, max: max});
+            if (coin) {
+                return rNum1;
+            }
+            return rNum2;
+        };
+
+        var expenseGenerator = function (categories, dates) {
+            for (var dateIndex = 0; dateIndex < dates.length; dateIndex++) {
+                var freshExpense = expenseFactory(categories, dates[dateIndex]);
+                $http.post('/api/newExpense', freshExpense)
+                    .success(function (data) {
+                        $scope.expenses.push(data[0]);
                     });
-                    expense = {};
-                    expense._userId = $cookies.userId;
-                    expense.name = chance.string({length: 4, pool: 'abcdefghijklmnopqrstuvwxyz'});
-                    expense.category = categories[chance.natural({min: 0, max: 6})];
-                    expense.amount = chance.natural({min: 1, max: 6});
-                    expense.cost = chance.floating({min: 0.01, max: 100, fixed: 2});
-                    console.log(dates[dateIndex]);
-                    dates[dateIndex].setHours(chance.natural({min: 0, max: 23}));
-                    dates[dateIndex].setMinutes(chance.natural({min: 0, max: 59}));
-                    dates[dateIndex].setSeconds(chance.natural({min: 0, max: 59}));
-                    dates[dateIndex].setMilliseconds(chance.natural({min: 0, max: 999}));
-                    expense.date = dates[dateIndex];
-                    $http.post('/api/newExpense', expense)
-                        .success(function (data) {
-                            $scope.expenses.push(data[0]);
-                        });
-                }
+
             }
         };
+
+        var expenseFactory = function (categories, date) {
+            var expense = {};
+            expense._userId = $cookies.userId;
+            expense.name = chance.string({length: 4, pool: 'abcdefghijklmnopqrstuvwxyz'});
+            expense.category = categories[chance.natural({min: 0, max: 6})];
+            expense.amount = chance.natural({min: 1, max: 6});
+            expense.cost = chance.floating({min: 0.01, max: 100, fixed: 2});
+            expense.date = date;
+
+            return expense;
+        };
+
         expenses.getExpensesByUserId($cookies.userId)
             .success(function (data) {
                 $scope.expenses = data;
@@ -272,46 +280,60 @@ FManagerControllers.controller('analyticsController', ['$routeParams', '$scope',
 
         };
 
-        var dataBuilder = function (month) {
+        var dataBuilder = function () {
+            var labels = [];
+            var data = {
+                cost: [],
+                category: []
+            };
+            var datasets = [];
+            var dataset = {
+                label: "Monthly report",
+                fillColor: "rgba(0,0,220,0.5)",
+                strokeColor: "rgba(220,220,220,1)",
+                pointColor: "rgba(220,220,220,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(220,220,220,1)",
+                data: []
+            };
             expenses.getExpensesByUserId($cookies.userId)
-                .success(function (data) {
-                    $scope.expenses = data;
-                    $scope.expenses.forEach(function (expense) {
-                        console.log(expense.date)
-                    })
+                .success(function (expenses) {
+                    expenses.forEach(function (expense) {
+                        if (labels.indexOf(parseInt(expense.date.slice(8, 10))) == -1) {
+                            labels.push(parseInt(expense.date.slice(8, 10)));
+                        }
+                        labels.sort(function (a, b) {
+                            if (a < b) {
+                                return -1;
+                            }
+                            if (a > b) {
+                                return 1;
+                            }
+                            return 0;
+                        });
+                        labels.forEach(function (day) {
+                            if (parseInt(expense.date.slice(5, 7)) == 3) {
+                                if (parseInt(expense.date.slice(8, 10)) == day) {
+                                    data.cost[day] += 0.2;
+                                }
+                            }
+                        });
+                    });
+                    console.log(labels);
+                    console.log(data.cost);
+                    dataset.data = data.cost;
+                    datasets.push(dataset);
+                    var newObj = {
+                        labels: labels,
+                        datasets: datasets
+                    };
+                    var ctx = document.getElementById("myChart").getContext("2d");
+                    new Chart(ctx).Bar(newObj, chartOptions);
                 });
         };
-
         dataBuilder();
 
-        var data = {
-            labels: ["1", "2", "3", "4", "5", "6", "7"],
-            datasets: [
-                {
-                    label: "My First dataset",
-                    fillColor: "rgba(220,220,220,0.2)",
-                    strokeColor: "rgba(220,220,220,1)",
-                    pointColor: "rgba(220,220,220,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(220,220,220,1)",
-                    data: [65, 59, 80, 81, 56, 55, 40]
-                },
-                {
-                    label: "My Second dataset",
-                    fillColor: "rgba(151,187,205,0.2)",
-                    strokeColor: "rgba(151,187,205,1)",
-                    pointColor: "rgba(151,187,205,1)",
-                    pointStrokeColor: "#fff",
-                    pointHighlightFill: "#fff",
-                    pointHighlightStroke: "rgba(151,187,205,1)",
-                    data: [28, 48, 40, 19, 86, 27, 90]
-                }
-            ]
-        };
-
-        var ctx = document.getElementById("myChart").getContext("2d");
-        new Chart(ctx).Line(data, chartOptions);
     }]);
 
 function registrationController($scope, $mdDialog, $location, $cookies, users) {
