@@ -105,6 +105,7 @@
             </div>
             <md-list class="animate-container">
                 <md-subheader class="md-no-sticky expense-list-table-header">Expenses:</md-subheader>
+                <md-progress-circular class="md-accent load-bar invisible" id="load" md-mode="indeterminate"></md-progress-circular>
                 <md-list-item class="md-4-line list-item-container animate-repeat"
                               ng-repeat="expense in expenses | filter:query | orderBy:orderProp track by expense._id">
                     <md-button class="md-icon-button" ng-click="removeExpense(expense._id)">

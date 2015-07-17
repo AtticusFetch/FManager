@@ -121,6 +121,11 @@ FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$
                 }
             }
             expenseGenerator(categories, dates);
+            expenses.getExpensesByUserId($cookies.userId)
+                .success(function (data) {
+                    $scope.expenses = data;
+                    $('#load').addClass('invisible');
+                });
         };
 
         var randomNumber = function (min, max) {
@@ -136,11 +141,12 @@ FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$
         };
 
         var expenseGenerator = function (categories, dates) {
+            $('#load').removeClass('invisible');
             for (var dateIndex = 0; dateIndex < dates.length; dateIndex++) {
                 var freshExpense = expenseFactory(categories, dates[dateIndex]);
                 $http.post('/api/newExpense', freshExpense)
                     .success(function (data) {
-                        $scope.expenses.push(data[0]);
+
                     });
 
             }
@@ -157,10 +163,11 @@ FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$
 
             return expense;
         };
-
+        $('#load').removeClass('invisible');
         expenses.getExpensesByUserId($cookies.userId)
             .success(function (data) {
                 $scope.expenses = data;
+                $('#load').addClass('invisible');
             });
         $scope.removeExpense = function (expenseId) {
             expenses.remove(expenseId)
@@ -180,8 +187,10 @@ FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$
         }
         $scope.submitExpense = function () {
             $scope.formData._userId = $cookies.userId;
+            $scope.formData.date.setDate(parseInt($scope.formData.date.getDate())+1);
             expenses.addExpense($scope.formData)
                 .success(function (data) {
+                    console.log(data);
                     expenses.getExpensesByUserId($cookies.userId)
                         .success(function (data) {
                             $scope.expenses = data;
@@ -299,6 +308,7 @@ FManagerControllers.controller('analyticsController', ['$routeParams', '$scope',
             };
             expenses.getExpensesByUserId($cookies.userId)
                 .success(function (expenses) {
+                    $scope.expenses = expenses;
                     expenses.forEach(function (expense) {
                         if (labels.indexOf(parseInt(expense.date.slice(8, 10))) == -1) {
                             labels.push(parseInt(expense.date.slice(8, 10)));
@@ -312,24 +322,38 @@ FManagerControllers.controller('analyticsController', ['$routeParams', '$scope',
                             }
                             return 0;
                         });
-                        labels.forEach(function (day) {
-                            if (parseInt(expense.date.slice(5, 7)) == 3) {
-                                if (parseInt(expense.date.slice(8, 10)) == day) {
-                                    data.cost[day] += 0.2;
+                    });
+
+                    labels.forEach(function (day) {
+                        $scope.expenses.forEach(function (expense) {
+                            var expenseDay = parseInt(expense.date.slice(8, 10));
+                            var expenseMonth = parseInt(expense.date.slice(5, 7));
+                            if (expenseMonth == 3) {
+                                if (expenseDay == day) {
+                                    data.cost.push({day: day, cost: parseFloat(expense.cost)})
                                 }
                             }
                         });
                     });
-                    console.log(labels);
-                    console.log(data.cost);
-                    dataset.data = data.cost;
+                    var dailyExpenses = [];
+                    data.cost.forEach(function(dayExpense) {
+                        if (!dailyExpenses[dayExpense.day]) {
+                            dailyExpenses[dayExpense.day] = 0;
+                            dailyExpenses[dayExpense.day] += dayExpense.cost;
+                        } else {
+                            dailyExpenses[dayExpense.day] += dayExpense.cost;
+                        }
+                    });
+                    dailyExpenses.forEach(function (expense) {
+                       dataset.data.push(expense);
+                    });
                     datasets.push(dataset);
                     var newObj = {
                         labels: labels,
                         datasets: datasets
                     };
                     var ctx = document.getElementById("myChart").getContext("2d");
-                    new Chart(ctx).Bar(newObj, chartOptions);
+                    new Chart(ctx).Line(newObj, chartOptions);
                 });
         };
         dataBuilder();
