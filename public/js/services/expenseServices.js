@@ -17,6 +17,10 @@ expenseServices.factory('expenses', ['$http', function ($http) {
 
         remove: function (expenseId) {
             return $http.delete('/api/removeExpense/' + expenseId)
+        },
+
+        getCategories: function () {
+            return ['Food', 'Lawns', 'Electronics', 'Taxes', 'Online Games', 'Gas', 'Wife'];
         }
     }
 }]);

@@ -108,7 +108,7 @@ FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$
         };
         $scope.generateExpenses = function () {
             $scope.clearAllExpenses();
-            var categories = ['Food', 'Lawns', 'Electronics', 'Taxes', 'Online Games', 'Gas', 'Wife'];
+            var categories = expenses.getCategories();
             var dates = [];
             var startingMonth = 2;
             var lastMonth = 3;
@@ -187,7 +187,7 @@ FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$
         }
         $scope.submitExpense = function () {
             $scope.formData._userId = $cookies.userId;
-            $scope.formData.date.setDate(parseInt($scope.formData.date.getDate())+1);
+            $scope.formData.date.setDate(parseInt($scope.formData.date.getDate()) + 1);
             expenses.addExpense($scope.formData)
                 .success(function (data) {
                     console.log(data);
@@ -217,6 +217,8 @@ FManagerControllers.controller('tablesController', ['$routeParams', '$scope', '$
 FManagerControllers.controller('analyticsController', ['$routeParams', '$scope', '$rootScope', '$location', '$timeout', '$mdSidenav', '$mdUtil', '$log', '$cookies', 'expenses',
     function ($routeParams, $scope, $rootScope, $location, $timeout, $mdSidenav, $mdUtil, $log, $cookies, expenses) {
         $scope.authMessage = '';
+        $scope.selected = [];
+        $scope.categories = expenses.getCategories();
         if (!$cookies.IsLogged) {
             alert('You are not logged on!');
             $location.url('/');
@@ -273,7 +275,7 @@ FManagerControllers.controller('analyticsController', ['$routeParams', '$scope',
             pointDotStrokeWidth: 1,
 
             //Number - amount extra to add to the radius to cater for hit detection outside the drawn point
-            pointHitDetectionRadius: 20,
+            pointHitDetectionRadius: 5,
 
             //Boolean - Whether to show a stroke for datasets
             datasetStroke: true,
@@ -289,8 +291,11 @@ FManagerControllers.controller('analyticsController', ['$routeParams', '$scope',
 
         };
 
-        var dataBuilder = function () {
+        var dataBuilder = function (categories) {
             var labels = [];
+            if (!categories) {
+                categories = expenses.getCategories()
+            }
             var data = {
                 cost: [],
                 category: []
@@ -298,7 +303,7 @@ FManagerControllers.controller('analyticsController', ['$routeParams', '$scope',
             var datasets = [];
             var dataset = {
                 label: "Monthly report",
-                fillColor: "rgba(0,0,220,0.5)",
+                fillColor: "rgba(0,0,220,0.3)",
                 strokeColor: "rgba(220,220,220,1)",
                 pointColor: "rgba(220,220,220,1)",
                 pointStrokeColor: "#fff",
@@ -307,9 +312,9 @@ FManagerControllers.controller('analyticsController', ['$routeParams', '$scope',
                 data: []
             };
             expenses.getExpensesByUserId($cookies.userId)
-                .success(function (expenses) {
-                    $scope.expenses = expenses;
-                    expenses.forEach(function (expense) {
+                .success(function (usersExpenses) {
+                    $scope.expenses = usersExpenses;
+                    usersExpenses.forEach(function (expense) {
                         if (labels.indexOf(parseInt(expense.date.slice(8, 10))) == -1) {
                             labels.push(parseInt(expense.date.slice(8, 10)));
                         }
@@ -323,31 +328,59 @@ FManagerControllers.controller('analyticsController', ['$routeParams', '$scope',
                             return 0;
                         });
                     });
-
-                    labels.forEach(function (day) {
-                        $scope.expenses.forEach(function (expense) {
-                            var expenseDay = parseInt(expense.date.slice(8, 10));
-                            var expenseMonth = parseInt(expense.date.slice(5, 7));
-                            if (expenseMonth == 3) {
-                                if (expenseDay == day) {
-                                    data.cost.push({day: day, cost: parseFloat(expense.cost)})
+                    //['Food', 'Lawns', 'Electronics', 'Taxes', 'Online Games', 'Gas', 'Wife']
+                    for (var currentCategory = 0; currentCategory < categories.length; currentCategory++) {
+                        //console.log(categories[currentCategory]);
+                        dataset = {
+                            label: "Monthly report",
+                            fillColor: "rgba(0,0,220,0.3)",
+                            strokeColor: "rgba(220,220,220,1)",
+                            pointColor: "rgba(220,220,220,1)",
+                            pointStrokeColor: "#fff",
+                            pointHighlightFill: "#fff",
+                            pointHighlightStroke: "rgba(220,220,220,1)",
+                            data: []
+                        };
+                        labels.forEach(function (day) {
+                            $scope.expenses.forEach(function (expense) {
+                                var expenseDay = parseInt(expense.date.slice(8, 10));
+                                var expenseMonth = parseInt(expense.date.slice(5, 7));
+                                var expenseCategory = expense.category;
+                                if (expenseMonth == 3 && expenseDay == day && expenseCategory == categories[currentCategory]) {
+                                    console.log(expense);
+                                    data.cost[expenseDay] = parseFloat(expense.cost)
                                 }
+                            });
+                        });
+                        console.log(data.cost);
+                        for (var i = 1; i < labels.length; i++) {
+                            if (data.cost[i]) {
+                                dataset.data.push(data.cost[i]);
+                            } else {
+                                dataset.data.push(0);
+                            }
+                        }
+                        console.log(dataset.data);
+                        var dailyExpenses = [];
+                        data.cost.forEach(function (dayExpense) {
+                            if (!dailyExpenses[dayExpense.day]) {
+                                dailyExpenses[dayExpense.day] = 0;
+                                dailyExpenses[dayExpense.day] += dayExpense.cost;
+                            } else {
+                                dailyExpenses[dayExpense.day] += dayExpense.cost;
                             }
                         });
-                    });
-                    var dailyExpenses = [];
-                    data.cost.forEach(function(dayExpense) {
-                        if (!dailyExpenses[dayExpense.day]) {
-                            dailyExpenses[dayExpense.day] = 0;
-                            dailyExpenses[dayExpense.day] += dayExpense.cost;
-                        } else {
-                            dailyExpenses[dayExpense.day] += dayExpense.cost;
-                        }
-                    });
-                    dailyExpenses.forEach(function (expense) {
-                       dataset.data.push(expense);
-                    });
-                    datasets.push(dataset);
+
+                        /*dailyExpenses.forEach(function (expense) {
+                         dataset.data.push(expense);
+                         });*/
+
+                        dataset.fillColor = "rgba(" + chance.natural({min: 0, max: 220}) + "," + chance.natural({
+                            min: 0,
+                            max: 220
+                        }) + "," + chance.natural({min: 0, max: 220}) + ",0.3)";
+                        datasets.push(dataset);
+                    }
                     var newObj = {
                         labels: labels,
                         datasets: datasets
@@ -357,7 +390,14 @@ FManagerControllers.controller('analyticsController', ['$routeParams', '$scope',
                 });
         };
         dataBuilder();
-
+        $scope.toggle = function (item, list) {
+            var idx = list.indexOf(item);
+            if (idx > -1) list.splice(idx, 1);
+            else {
+                list.push(item);
+                dataBuilder(list);
+            }
+        };
     }]);
 
 function registrationController($scope, $mdDialog, $location, $cookies, users) {

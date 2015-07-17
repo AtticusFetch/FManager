@@ -15,7 +15,8 @@
             <div class="side-nav-button-block" hide-md show-gt-md>
                 <ul>
                     <li>
-                        <md-button ng-href="#/{{currUsername}}/profile" class="md-raised md-primary isActive" ng-click="">
+                        <md-button ng-href="#/{{currUsername}}/profile" class="md-raised md-primary isActive"
+                                   ng-click="">
                             Profile
                         </md-button>
                     </li>
@@ -40,9 +41,26 @@
     </md-sidenav>
     <md-content>
         <div class="graph-container">
-            <h1 class="md-display-1 sub-header">March report</h1>
-            <div class="graph">
-                <canvas id="myChart" width="800" height="600"></canvas>
+            <div class="chart">
+                <h1 class="md-display-1 sub-header">March report</h1>
+
+                <div class="graph">
+                    <canvas id="myChart" width="800" height="600"></canvas>
+                </div>
+            </div>
+            <div class="chart-filters">
+                    <div flex="50" flex-md="100" layout="column">
+                        <fieldset class="standard" flex>
+                            <legend>Choose categories to display</legend>
+                            <div layout="row" layout-wrap>
+                                <div flex="50" ng-repeat="category in categories">
+                                    <md-checkbox ng-checked="" ng-click="toggle(item, selected)">
+                                        {{ category }}
+                                    </md-checkbox>
+                                </div>
+                            </div>
+                        </fieldset>
+                </div>
             </div>
         </div>
     </md-content>
