@@ -21,6 +21,14 @@ expenseServices.factory('expenses', ['$http', function ($http) {
 
         getCategories: function () {
             return ['Food', 'Lawns', 'Electronics', 'Taxes', 'Online Games', 'Gas', 'Wife'];
+        },
+
+        removeAll: function (userId) {
+            return $http.delete('/clearAllExpenses/' + userId)
+        },
+
+        pushDump: function (dump) {
+            return $http.post('/api/pushDump', dump)
         }
     }
 }]);

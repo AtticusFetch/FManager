@@ -50,8 +50,29 @@ app.post('/api/newExpense', function (req, res) {
                 res.send(err);
             console.log(expense);
             res.json(expense);
-
         })
+    })
+});
+
+app.post('/api/pushDump', function (req, res) {
+    req.body.forEach(function (expense) {
+        Expense.create({
+            _userId: expense._userId,
+            date: expense.date || new Date(),
+            category: expense.category,
+            name: expense.name,
+            amount: expense.amount || 1,
+            cost: expense.cost,
+            done: false
+        }, function (err, expense) {
+            if (err)
+            res.send(err)
+        })
+    });
+    Expense.find({_userId: req.body[0].userId}, function (err, expenses) {
+        if (err)
+            res.send(err);
+        res.json(expenses);
     })
 });
 

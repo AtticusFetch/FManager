@@ -5,14 +5,10 @@ TablesControllers.controller('tablesController', ['$routeParams', '$scope', '$ro
         $scope.authMessage = '';
         $scope.formData = {};
         $scope.clearAllExpenses = function () {
-            $http.delete('/clearAllExpenses/' + $cookies.userId);
-            for (var i = 0; i < $scope.expenses.length; i++) {
-                (function () {
-                    setTimeout(function (i) {
-                        return $scope.expenses.splice($scope.expenses.indexOf($scope.expenses[i]), 1)
-                    }, 1)
-                })();
-            }
+            expenses.removeAll($cookies.userId)
+                .success(function () {
+                    $scope.expenses = [];
+                });
         };
         $scope.generateExpenses = function () {
             $scope.clearAllExpenses();
@@ -50,14 +46,11 @@ TablesControllers.controller('tablesController', ['$routeParams', '$scope', '$ro
 
         var expenseGenerator = function (categories, dates) {
             $('#load').removeClass('invisible');
+            var generatedExpenses = [];
             for (var dateIndex = 0; dateIndex < dates.length; dateIndex++) {
-                var freshExpense = expenseFactory(categories, dates[dateIndex]);
-                $http.post('/api/newExpense', freshExpense)
-                    .success(function (data) {
-
-                    });
-
+                generatedExpenses.push(expenseFactory(categories, dates[dateIndex]));
             }
+            expenses.pushDump(generatedExpenses);
         };
 
         var expenseFactory = function (categories, date) {

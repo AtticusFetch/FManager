@@ -97,26 +97,29 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
                 pointHighlightStroke: "rgba(220,220,220,1)",
                 data: []
             };
+
+            var getDaysLabels = function (usersExpenses){
+                usersExpenses.forEach(function (expense) {
+                    if (labels.indexOf(parseInt(expense.date.slice(8, 10))) == -1) {
+                        labels.push(parseInt(expense.date.slice(8, 10)));
+                    }
+                    labels.sort(function (a, b) {
+                        if (a < b) {
+                            return -1;
+                        }
+                        if (a > b) {
+                            return 1;
+                        }
+                        return 0;
+                    });
+                });
+                return labels;
+            };
             expenses.getExpensesByUserId($cookies.userId)
                 .success(function (usersExpenses) {
                     $scope.expenses = usersExpenses;
-                    usersExpenses.forEach(function (expense) {
-                        if (labels.indexOf(parseInt(expense.date.slice(8, 10))) == -1) {
-                            labels.push(parseInt(expense.date.slice(8, 10)));
-                        }
-                        labels.sort(function (a, b) {
-                            if (a < b) {
-                                return -1;
-                            }
-                            if (a > b) {
-                                return 1;
-                            }
-                            return 0;
-                        });
-                    });
-                    //['Food', 'Lawns', 'Electronics', 'Taxes', 'Online Games', 'Gas', 'Wife']
+                    labels = getDaysLabels(usersExpenses);
                     for (var currentCategory = 0; currentCategory < categories.length; currentCategory++) {
-                        //console.log(categories[currentCategory]);
                         dataset = {
                             label: "Monthly report",
                             fillColor: "rgba(0,0,220,0.3)",
@@ -153,10 +156,6 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
                                 dailyExpenses[dayExpense.day] += dayExpense.cost;
                             }
                         });
-
-                        /*dailyExpenses.forEach(function (expense) {
-                         dataset.data.push(expense);
-                         });*/
 
                         dataset.fillColor = "rgba(" + chance.natural({min: 0, max: 220}) + "," + chance.natural({
                             min: 0,
