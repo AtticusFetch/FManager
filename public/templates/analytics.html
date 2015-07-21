@@ -42,7 +42,21 @@
     <md-content class="analytics-content">
         <div class="graph-container">
             <div class="chart">
-                <h1 class="md-display-1 sub-header">March report</h1>
+                <select ng-change="changeMonth()" ng-model="displayMonth">
+                    <option value="1">january</option>
+                    <option value="2">february</option>
+                    <option value="3">march</option>
+                    <option value="4">april</option>
+                    <option value="5">may</option>
+                    <option value="6">june</option>
+                    <option value="7">july</option>
+                    <option value="8">august</option>
+                    <option value="9">september</option>
+                    <option value="10">october</option>
+                    <option value="11">november</option>
+                    <option value="12">december</option>
+                </select>
+                <h1 class="md-display-1 sub-header">{{month}} report</h1>
 
                 <div class="graph">
                     <canvas id="myChart" width="800" height="600"></canvas>

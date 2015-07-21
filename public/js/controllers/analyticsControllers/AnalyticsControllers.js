@@ -77,11 +77,15 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
 
         };
 
-        var dataBuilder = function (categories) {
+        var dataBuilder = function (categories, monthToDisplay) {
             var labels = [];
             if (!categories) {
                 categories = expenses.getCategories()
             }
+            if (!monthToDisplay) {
+                monthToDisplay = 3;
+            }
+            $scope.month = monthToDisplay;
             var data = {
                 cost: [],
                 category: []
@@ -135,7 +139,7 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
                                 var expenseDay = parseInt(expense.date.slice(8, 10));
                                 var expenseMonth = parseInt(expense.date.slice(5, 7));
                                 var expenseCategory = expense.category;
-                                if (expenseMonth == 3 && expenseDay == day && expenseCategory == categories[currentCategory]) {
+                                if (expenseMonth == monthToDisplay && expenseDay == day && expenseCategory == categories[currentCategory]) {
                                     data.cost[expenseDay] = parseFloat(expense.cost)
                                 }
                             });
@@ -167,9 +171,22 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
                         labels: labels,
                         datasets: datasets
                     };
-                    var ctx = document.getElementById("myChart").getContext("2d");
-                    new Chart(ctx).Line(newObj, chartOptions);
+                    draw(newObj);
                 });
+        };
+
+        var draw = function (obj) {
+            var canvas = document.getElementById("myChart");
+            var canvasContainer = canvas.parentNode;
+            canvas.parentNode.removeChild(canvas);
+            var newCanvas = document.createElement('canvas');
+            newCanvas.setAttribute('id','myChart');
+            newCanvas.setAttribute('width','800');
+            newCanvas.setAttribute('height','600');
+            canvasContainer.appendChild(newCanvas);
+            canvas = document.getElementById("myChart");
+            var ctx = canvas.getContext("2d");
+            new Chart(ctx).Line(obj, chartOptions);
         };
         dataBuilder();
         $scope.toggle = function (item, list) {
@@ -186,5 +203,9 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
                 list.push(item);
                 dataBuilder(list);
             }
+            $scope.chartFilters = list;
         };
+        $scope.changeMonth = function () {
+            dataBuilder($scope.chartFilters,parseInt($scope.displayMonth));
+        }
     }]);

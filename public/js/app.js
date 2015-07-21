@@ -29,6 +29,8 @@ var FManager = angular.module('FManager', ['ngRoute', 'MainPageControllers', 'Pr
                 })
         }]);
 
+//Global chart options
+
 Chart.defaults.global = {
     // Boolean - Whether to animate the chart
     animation: true,

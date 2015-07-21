@@ -14,8 +14,8 @@ TablesControllers.controller('tablesController', ['$routeParams', '$scope', '$ro
             $scope.clearAllExpenses();
             var categories = expenses.getCategories();
             var dates = [];
-            var startingMonth = 2;
-            var lastMonth = 3;
+            var startingMonth = 1;
+            var lastMonth = 12;
 
             for (var month = startingMonth; month <= lastMonth; month++) {
                 for (var day = 1; day <= 30; day++) {
@@ -50,7 +50,15 @@ TablesControllers.controller('tablesController', ['$routeParams', '$scope', '$ro
             for (var dateIndex = 0; dateIndex < dates.length; dateIndex++) {
                 generatedExpenses.push(expenseFactory(categories, dates[dateIndex]));
             }
-            expenses.pushDump(generatedExpenses);
+            if (generatedExpenses.length > 200) {
+                var part1 = generatedExpenses.slice(0, parseInt(generatedExpenses.length / 2));
+                var part2 = generatedExpenses.slice(parseInt(generatedExpenses.length / 2));
+                expenses.pushDump(part1).success(function () {
+                    expenses.pushDump(part2)
+                })
+            } else {
+                expenses.pushDump(generatedExpenses);
+            }
         };
 
         var expenseFactory = function (categories, date) {
