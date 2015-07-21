@@ -83,10 +83,11 @@ function logInController($scope, $mdDialog, $location, $cookies, $http, users) {
     //$http.delete('clearAll');
     //$http.get('/api/getAllUsers');
     //$http.get('/api/getAllExpenses');
+    //$http.delete('clearAllExpenses');
     $scope.close = function () {
         $mdDialog.hide();
     };
-    $scope.logIn = function () {
+    $scope.submit = function () {
         users.getUser($scope.formData)
             .success(function (data) {
                 $mdDialog.hide();

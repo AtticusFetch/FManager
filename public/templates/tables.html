@@ -48,8 +48,9 @@
                 <input ng-model="formData.name" required/>
             </md-input-container>
             <md-input-container>
-                <label>Category</label>
-                <input ng-model="formData.category" required type="text"/>
+                <md-select ng-model="formData.category" placeholder="Category">
+                    <md-option value="{{category}}" ng-repeat="category in categories">{{category}}</md-option>
+                </md-select>
             </md-input-container>
             <md-input-container>
                 <label>Amount</label>

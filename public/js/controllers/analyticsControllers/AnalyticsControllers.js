@@ -85,7 +85,7 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
             if (!monthToDisplay) {
                 monthToDisplay = 3;
             }
-            $scope.month = monthToDisplay;
+            $scope.month = monthToString(monthToDisplay);
             var data = {
                 cost: [],
                 category: []
@@ -102,8 +102,13 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
                 data: []
             };
 
+            function monthToString (monthNumber) {
+                var month=['January','February','March','April','May','June','July','August','September','October','November','December'];
+                return month[monthNumber-1]
+            }
+
             var getDaysLabels = function (usersExpenses){
-                usersExpenses.forEach(function (expense) {
+                /*usersExpenses.forEach(function (expense) {
                     if (labels.indexOf(parseInt(expense.date.slice(8, 10))) == -1) {
                         labels.push(parseInt(expense.date.slice(8, 10)));
                     }
@@ -116,7 +121,10 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
                         }
                         return 0;
                     });
-                });
+                });*/
+                for (var i = 1; i <= 31; i++) {
+                    labels.push(i);
+                }
                 return labels;
             };
             expenses.getExpensesByUserId($cookies.userId)
@@ -140,18 +148,24 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
                                 var expenseMonth = parseInt(expense.date.slice(5, 7));
                                 var expenseCategory = expense.category;
                                 if (expenseMonth == monthToDisplay && expenseDay == day && expenseCategory == categories[currentCategory]) {
-                                    data.cost[expenseDay] = parseFloat(expense.cost)
+                                    //data.cost[expenseDay] = parseFloat(expense.cost)
+                                    if (!data.cost[expenseDay]) {
+                                        data.cost[expenseDay] = 0;
+                                        data.cost[expenseDay] += parseFloat(expense.cost);
+                                    } else {
+                                        data.cost[expenseDay] += parseFloat(expense.cost);
+                                    }
                                 }
                             });
                         });
-                        for (var i = 1; i < labels.length; i++) {
+                        for (var i = 1; i <= labels.length; i++) {
                             if (data.cost[i]) {
                                 dataset.data.push(data.cost[i]);
                             } else {
                                 dataset.data.push(0);
                             }
                         }
-                        var dailyExpenses = [];
+                        /*var dailyExpenses = [];
                         data.cost.forEach(function (dayExpense) {
                             if (!dailyExpenses[dayExpense.day]) {
                                 dailyExpenses[dayExpense.day] = 0;
@@ -159,7 +173,7 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
                             } else {
                                 dailyExpenses[dayExpense.day] += dayExpense.cost;
                             }
-                        });
+                        });*/
 
                         dataset.fillColor = "rgba(" + chance.natural({min: 0, max: 220}) + "," + chance.natural({
                             min: 0,
@@ -171,6 +185,7 @@ AnalyticsControllers.controller('analyticsController', ['$routeParams', '$scope'
                         labels: labels,
                         datasets: datasets
                     };
+                    console.log(dataset.data);
                     draw(newObj);
                 });
         };

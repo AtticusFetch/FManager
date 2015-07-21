@@ -4,6 +4,7 @@ TablesControllers.controller('tablesController', ['$routeParams', '$scope', '$ro
     function ($routeParams, $scope, $rootScope, $location, $timeout, $mdSidenav, $mdUtil, $log, $cookies, $http, expenses) {
         $scope.authMessage = '';
         $scope.formData = {};
+        $scope.categories = expenses.getCategories();
         $scope.clearAllExpenses = function () {
             expenses.removeAll($cookies.userId)
                 .success(function () {
@@ -16,9 +17,10 @@ TablesControllers.controller('tablesController', ['$routeParams', '$scope', '$ro
             var dates = [];
             var startingMonth = 1;
             var lastMonth = 12;
+            var daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
 
             for (var month = startingMonth; month <= lastMonth; month++) {
-                for (var day = 1; day <= 30; day++) {
+                for (var day = 1; day <= daysInMonth[month-1]; day++) {
                     for (var hour = 0; hour < 24; hour += 8) {
                         dates.push(new Date(2015, month, day, hour, randomNumber(0, 59), randomNumber(0, 59)));
                     }
