@@ -90,12 +90,12 @@ function logInController($scope, $mdDialog, $location, $cookies, $http, users) {
     $scope.submit = function () {
         users.getUser($scope.formData)
             .success(function (data) {
-                $mdDialog.hide();
                 $cookies.IsLogged = true;
                 $cookies.username = data[0].username;
                 $cookies.email = data[0].email;
                 $cookies.userId = data[0]._id;
                 $location.url('/' + data[0].username);
+                $mdDialog.hide();
             })
             .error(function (data) {
                 console.log('Error: ' + data);
