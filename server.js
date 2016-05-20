@@ -170,5 +170,64 @@ app.delete('/clearAll', function (req, res) {
     });
 });
 
+// Parser
+
+var request = require('request'),
+    cheerio = require('cheerio'),
+    iconv = require('iconv-lite'),
+    jsonfile = require('jsonfile'),
+    WordPOS = require('wordpos'),
+    option = {
+      urls: ""
+    }
+
+var file = 'json/urls.json';
+jsonfile.readFile(file, function(err, obj) {
+  option.urls = obj.urls;
+})
+
+app.get('/test', function (req, res) {
+    var resultJson = [];
+    var resultFile = 'json/result.json';
+    wordpos = new WordPOS();
+    var stringToWords = function(str){
+      var words = str.toLowerCase().split(/\W+/);
+      var returnArr = [];
+      words.forEach(function(word, i){
+        // wordpos.isNoun(word, function(result, word){
+        //   if (result){
+        //     returnArr.push(word);
+        //   }
+        // })
+        returnArr.push(word);
+      })
+      return returnArr;
+    }
+
+    for(var i=0; i < option.urls.length; i++){
+      // resultJson.push(option.urls[i]);
+      request({uri:option.urls[i],method:'GET',encoding:'binary'},
+      function (err, res, body) {
+        var $=cheerio.load(
+          iconv.encode(
+            iconv.decode(
+              new Buffer(body,'binary'),
+              'windows-1251'),
+              'windows-1251')
+        );
+            // console.log($("meta[name='description']")['0'].attribs.content);
+
+        resultJson.push(stringToWords($("meta[name='description']")['0'].attribs.content));
+      });
+    }
+    setTimeout(function(){
+      jsonfile.writeFile(resultFile, resultJson, function (err) {
+        console.error(err)
+      })
+      // console.log(resultJson);
+    }, 4000)
+});
+
+
 app.listen(8000);
 console.log("App listening on port 8000");
