@@ -162,6 +162,76 @@ app.get('/api/mainPage', function (req, res) {
     res.sendFile('public/index.html', {root: __dirname});
 });
 
+app.get('/parser', function (req, res) {
+    res.sendFile('public/templates/diplom.html', {root: __dirname});
+});
+
+app.post('/api/parser/', function (req, res) {
+    console.log(req.body.url);
+    var resultObj = {};
+    resultObj.topics = [];
+    var AYLIENTextAPI = require('aylien_textapi');
+    resultObj.str = "";
+    var promise = new Promise(
+      function(resolve, reject) {
+        request({uri:req.body.url,method:'GET',encoding:'binary'},
+        function (err, res, body) {
+          var $=cheerio.load(
+            iconv.encode(
+              iconv.decode(
+                new Buffer(body,'binary'),
+                'windows-1251'),
+                'windows-1251')
+              );
+              // console.log($("meta[name='description']")['0'].attribs.content);
+              if ($("meta[name='description']")['0']) {
+                resultObj.str += $("meta[name='description']")['0'].attribs.content;
+              }
+              if ($("meta[name='keywords']")['0']) {
+                resultObj.str += " " + $("meta[name='keywords']")['0'].attribs.content;
+              }
+              // res.resultStr = resultStr;
+              // res.json(resultObj);
+              // console.log(resultStr);
+              resolve(resultObj);
+            }
+          );
+
+      }
+    )
+    promise.then( function(val){
+      var textapi = new AYLIENTextAPI({
+        application_id: "a9a71d3d",
+        application_key: "39f1d1da917f6749eab7304dc91220d0"
+      });
+      var promise = new Promise(
+        function(resolve, reject) {
+          textapi.classifyByTaxonomy({
+            'text': val.str,
+            'taxonomy': 'iab-qag'
+          }, function(error, response) {
+            if (error === null) {
+              response['categories'].forEach(function(c) {
+                // console.log(c.label);
+                val.topics.push(c.label);
+                // console.log(val);
+              });
+              resolve(val);
+            }
+          });
+        });
+        promise.then(function(val){
+          res.send(val);
+          res.end();
+        })
+    });
+    // promise.then(function(val){
+    //   val.then(function(val){
+    //   })
+    // });
+
+});
+
 app.delete('/clearAll', function (req, res) {
     User.remove(function (err, user) {
         User.find(function(err, users) {
@@ -193,14 +263,14 @@ app.get('/test', function (req, res) {
     var stringToWords = function(str){
       var words = str.toLowerCase().split(/\W+/);
       var returnArr = [];
-      words.forEach(function(word, i){
-        // wordpos.isNoun(word, function(result, word){
-        //   if (result){
-        //     returnArr.push(word);
-        //   }
-        // })
-        returnArr.push(word);
-      })
+      // words.forEach(function(word, i){
+      //   // wordpos.isNoun(word, function(result, word){
+      //   //   if (result){
+      //   //     returnArr.push(word);
+      //   //   }
+      //   // })
+      //   returnArr.push(word);
+      // })
       return returnArr;
     }
 

@@ -4,6 +4,7 @@
   "description": "",
   "main": "server.js",
   "devDependencies": {
+    "aylien_textapi": "^0.6.0",
     "body-parser": "~1.5.2",
     "chance": "^0.7.6",
     "cheerio": "^0.20.0",
